@@ -18,7 +18,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $productRes = Product::find($id);
-        $news = DB::table('ds_notice_form')->select('title', 'id', 'time', 'content')->where('pid', '=', $id)->paginate(2);
+        $news = DB::table('ds_notice_form')->select('title', 'id', 'time', 'content')->where('pid', '=', $id)->orderBy('id',"DESC")->paginate(2);
         if ($productRes != null) {
             $productData = $productRes->toArray();
         } else {
@@ -135,7 +135,8 @@ class ProductController extends Controller
             return [false];
         }
     }
-        // 保存编辑器ajax提交过来的二进制图片数据流
+
+    // 保存编辑器ajax提交过来的二进制图片数据流
     public function editorupload(Request $request)
     {
         $img_content = $request->get('img');// 获取数据流内容
@@ -147,26 +148,27 @@ class ProductController extends Controller
             }
             $new_file = $dir . uniqid() . rand(1111, 9999) . ".{$type}";;
             if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $img_content)))) {
-             return json_encode(['path'=>$request->url()."/..".strstr($new_file,'/')]);
+                return json_encode(['path' => $request->url() . "/.." . strstr($new_file, '/')]);
             } else {
-               return json_encode(['path'=>false]);
+                return json_encode(['path' => false]);
             }
         }
     }
+
     //分页 + 搜索
-    public  function page(){
+    public function page(Request $request)
+    {
 
-        $page_size=5;
-        $count=DB::table('ds_notice_form')->count();
-        $total_page=ceil($count/$page_size);
-        $page=1;//默认第一页
+        $page_size = 5;//当前每页显示条数
+        $count = DB::table('ds_notice_form')->count();//得到总条数
+        $total_page = ceil($count / $page_size);//得到总页数
+        $page = (1 <= ($request->get('page')) && ($request->get('page')) <= $total_page) ? $request->get('page') : $total_page;// 判断当前页数是否默认第一页
         //建立查询数据
-        $data=DB::table('ds_notice_form')->orderBy('id')->offset($page,$page_size)->limit($page_size)->get();
-        
+        $data = DB::table('ds_notice_form')->orderBy('id','DESC')->offset(($page-1)*$page_size)->limit($page_size)->get();
+        $r= json_encode($data);
 
-
-
-var_dump($data);exit;
+        var_dump($r);
+        exit;
 
     }
 

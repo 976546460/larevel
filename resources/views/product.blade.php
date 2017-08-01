@@ -192,7 +192,16 @@
         </div>
     </div>
 </div>
-<!-- Large modal -->
+{{--分页条--}}
+<div class="pagination">
+    <a href="#" class="first" data-action="first">&laquo;</a>
+    <a href="#" class="previous" data-action="previous">&lsaquo;</a>
+    <input type="text" readonly="readonly" data-max-page="40" />
+    <a href="#" class="next" data-action="next">&rsaquo;</a>
+    <a href="#" class="last" data-action="last">&raquo;</a>
+</div>
+
+<!-- Large modal 模态框 -->
 @foreach( $news as $v)
 <div class="modal fade bs-example-modal-lg_<?=$v->id?>" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
     <div class="modal-dialog modal-lg" role="document">
@@ -206,9 +215,28 @@
     </div>
 </div>
 @endforeach
+<?php //var_dump($news);?>
+<?php //echo $news->render();?>
+<!-- 分页初始化-->
 
-<?php echo $news->render(); ?>
-<!-- Modal -->
+<link rel="stylesheet" href="jqpagination.css"/>
+<script src="jquery-1.6.2.min.js"></script>
+<script src="jquery.jqpagination.min.js"></script>
+
+<script>
+    $('.pagination').jqPagination({
+        link_string : '/?page={page_number}',
+        current_page: 5, //设置当前页 默认为1
+        max_page : 40, //设置最大页 默认为1
+        page_string : '当前第{current_page}页,共{max_page}页',
+        paged : function(page) {
+            //回发事件。。。
+        }
+    });
+
+</script>
+
+
 <nav aria-label="...">
     <ul class="pagination">
         <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
