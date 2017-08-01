@@ -15,17 +15,9 @@
     <script src="../js/locales/es.js" type="text/javascript"></script>
     <script src="../themes/explorer/theme.js" type="text/javascript"></script>
     <script src="../js/bootstrap.min.js" type="text/javascript"></script>
-
-
-        <link rel="shortcut icon" href="favicon.ico">
-
-        <link href="../css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet"><link href="../css/animate.min.css" rel="stylesheet">
-        <link href="../css/style.min862f.css?v=4.1.0" rel="stylesheet">
-        {{--<link rel="stylesheet" href="file:///H:/%E6%A8%A1%E6%9D%BF/hplus%20V4.1.0/hplus%20V4.1.0/hplus/js/plugins/layer/skin/layer.css" id="layui_layer_skinlayercss"><link rel="stylesheet" href="file:///H:/%E6%A8%A1%E6%9D%BF/hplus%20V4.1.0/hplus%20V4.1.0/hplus/js/plugins/layer/skin/layer.ext.css" id="layui_layer_skinlayerextcss"><link rel="stylesheet" href="file:///H:/%E6%A8%A1%E6%9D%BF/hplus%20V4.1.0/hplus%20V4.1.0/hplus/js/plugins/layer/skin/moon/style.css" id="layui_layer_skinmoonstylecss"></head>--}}
-
-
-
-
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="../css/font-awesome.min93e3.css?v=4.4.0" rel="stylesheet"><link href="../css/animate.min.css" rel="stylesheet">
+    <link href="../css/style.min862f.css?v=4.1.0" rel="stylesheet">
 </head>
 <body>
 <div class="container kv-main">
@@ -51,7 +43,6 @@
     </form>
 </div>
 
-
 <script>
     $(function(){
         $.ajaxSetup( {
@@ -69,7 +60,6 @@
             }
         });
     });
-
     /**
      * 照片展示
      * @param djson
@@ -164,11 +154,7 @@
         });
     }
 </script>
-
-
-
 <div class="wrapper wrapper-content animated fadeInRight">
-
     <div class="row">
         <div class="col-sm-12">
             <div class="ibox float-e-margins">
@@ -184,17 +170,15 @@
                             <th class="footable-visible footable-sortable">添加时间<span class="footable-sort-indicator"></span></th>
                             <th class="footable-visible footable-last-column footable-sortable">操作<span class="footable-sort-indicator"></span></th>
                         </tr>
-                        <?php
-
-                        ?>
                         </thead>
                         <tbody>
+
                         @foreach($news as $new)
                         <tr class="footable-even" style="display: table-row;">
                             <td class="footable-visible footable-first-column"><span class="footable-toggle"></span><?=$new->title?></td>
                             <td class="footable-visible"><?=date('Y-m-d H:i:s',$new->time)?></td>
                             <td class="footable-visible footable-last-column">
-                                <a href="#" class="glyphicon glyphicon-zoom-in" data-toggle="modal" data-target="#myModal_<?=$new->id?>"> </a>&nbsp;&nbsp;
+                                <a href="#" class="glyphicon glyphicon-zoom-in" data-toggle="modal" data-target=".bs-example-modal-lg_<?=$new->id?>"> </a>&nbsp;&nbsp;
                                 <a href="/edit/<?=$new->id?>" class="glyphicon glyphicon-pencil"> </a>&nbsp;&nbsp;
                                 <a href="#" class="glyphicon glyphicon-remove"> </a>&nbsp;&nbsp;
                             </td>
@@ -208,25 +192,29 @@
         </div>
     </div>
 </div>
-
-<!-- Modal -->
+<!-- Large modal -->
 @foreach( $news as $v)
-<div class="modal fade" id="myModal_<?=$v->id?>" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
+<div class="modal fade bs-example-modal-lg_<?=$v->id?>" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel"><?=$v->title?></h4>
             </div>
-            <div class="modal-body">
-               <?=$v->content?>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-            </div>
+            <?=$v->content?>
         </div>
     </div>
 </div>
 @endforeach
+
+<?php echo $news->render(); ?>
+<!-- Modal -->
+<nav aria-label="...">
+    <ul class="pagination">
+        <li class="disabled"><a href="#" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a></li>
+        <li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+        ...
+    </ul>
+</nav>
 </body>
 </html>

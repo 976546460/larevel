@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Img;
+use App\Noticeform;
 use App\Product;
 use Illuminate\Contracts\Encryption\EncryptException;
 use Illuminate\Http\Request;
@@ -13,18 +14,18 @@ use Psy\Exception\RuntimeException;
 
 class ProductController extends Controller
 {
+    //页面初始化
     public function show($id)
     {
         $productRes = Product::find($id);
-        $news = DB::table('ds_notice_form')->select('title', 'id','time','content')->get()->toArray();
-
+        $news = DB::table('ds_notice_form')->select('title', 'id', 'time', 'content')->where('pid', '=', $id)->paginate(2);
         if ($productRes != null) {
             $productData = $productRes->toArray();
         } else {
-           // throw new RuntimeException("游戏未找到");
+            // throw new RuntimeException("游戏未找到");
             $this->SenderUserMsg(false, '未找到此游戏');
         }
-        return view('product', ['productData' => $productData,'news'=>$news]);
+        return view('product', ['productData' => $productData, 'news' => $news]);
     }
 
     /**
@@ -37,24 +38,17 @@ class ProductController extends Controller
     {
         $productId = intval($request->get('productId'));
         $Img = new Img();
-        /*  DB::table('users')
-              ->where('name', '=', 'John')
-              ->orWhere(function ($query) {
-                  $query->where('votes', '>', 100)
-                      ->where('title', '<>', 'Admin');
-              })
-              ->get();*/
         $ImgResult = $Img->where('pid', $productId)
             ->orWhere(function ($query) {
-            $query->where('level', '=', 1)
-                ->where('level', '=', 3);
-                })->get();
+                $query->where('level', '=', 1)
+                    ->where('level', '=', 3);
+            })->get();
         if ($ImgResult != null) {
             $fileList = array();
             foreach ($ImgResult->toArray() as $key => $value) {
                 $fileList[$key]['id'] = $value['id'];
                 $fileList[$key]['fileIdFile'] = array(
-                    'level'=>$value['level'],
+                    'level' => $value['level'],
                     'name' => $value['name'],
                     'filePath' => $value['url']
                 );
@@ -90,7 +84,7 @@ class ProductController extends Controller
     public function UploadImg(Request $request)
     {
         $productId = intval($request->get('productId'));
-        $level= intval($request->get('level'));
+        $level = intval($request->get('level'));
         if ($productId == 0) {
             $this->SenderUserMsg(false, '没有发现此产品');
         } else {
@@ -114,8 +108,62 @@ class ProductController extends Controller
         }
     }
 
-    public function edit($id){
-       $content=DB::table('ds_notice_form')->select('title', 'id','content')->where('id','=',$id)->get()->toArray();
-        return view('editContent',['content'=>$content]);
+    public function edit($id)
+    {
+        $content = DB::table('ds_notice_form')->select('title', 'pid', 'id', 'content')->where('id', '=', $id)->get()->toArray();
+        return view('editContent', ['content' => $content]);
     }
+
+    public function save(Request $request)
+    {
+        // $file = Input::file('file_data');
+        //检验一下上传的文件是否有效.
+        //  $clientName = $file->getClientOriginalName();
+        // $extension = $file->getClientOriginalExtension();
+        // var_dump($file);
+
+        // exit;
+        $title = $request->get('title');
+        $content = $request->get('content');
+        $id = intval($request->get('id'));
+        $time = date(time());
+        $sql = "update  `ds_notice_form` set title='{$title}',content='{$content}',`time`={$time} where id=?";
+        $r = DB::update($sql, [$id]);
+        if ($r) {
+            return [true];
+        } else {
+            return [false];
+        }
+    }
+        // 保存编辑器ajax提交过来的二进制图片数据流
+    public function editorupload(Request $request)
+    {
+        $img_content = $request->get('img');// 获取数据流内容
+        if (preg_match('/^(data:\s*image\/(\w+);base64,)/', $img_content, $result)) {//正则匹配出数据流和图片的格式
+            $type = $result[2];
+            $dir = "./uploads/newsimg/" . date("Y-m-d", time()) . "/";
+            if (!is_dir($dir)) {
+                mkdir($dir, 0777, true);
+            }
+            $new_file = $dir . uniqid() . rand(1111, 9999) . ".{$type}";;
+            if (file_put_contents($new_file, base64_decode(str_replace($result[1], '', $img_content)))) {
+             return json_encode(['path'=>$request->url()."/..".strstr($new_file,'/')]);
+            } else {
+               return json_encode(['path'=>false]);
+            }
+        }
+    }
+    //分页 + 搜索
+    public  function page(){
+
+        $page_size=5;
+        $count=DB::table('ds_notice_form')->count();
+        $total_page=ceil($count/$page_size);
+        $page=1;//默认第一页
+        //建立查询数据
+        $data=DB::table('ds_notice_form')->orderBy('id')->offset($page,$page_size)->limit($page_size)->get();
+var_dump($data);exit;
+
+    }
+
 }

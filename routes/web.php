@@ -29,8 +29,12 @@ Route::group(['middleware' => 'verify'], function ()
 
 
     Route::resource('product'       ,'ProductController');
-
+    Route::get('edit/{id}', 'ProductController@edit');
+    Route::post('editsave', 'ProductController@save');
+    Route::post('editorupload', 'ProductController@editorupload');
 });
-Route::get('edit/{id}', 'ProductController@edit');
+Route::get('page','ProductController@page');
+
+
 
 ?>

@@ -19,7 +19,6 @@ class PublicController extends Controller
     }
 
     public  function imgList(Request  $request){
-//        $level = intval($request->get('level'));
         $Img       = new Img();
         $ImgResult = $Img->where('pId',0)->get();
         if($ImgResult != null)

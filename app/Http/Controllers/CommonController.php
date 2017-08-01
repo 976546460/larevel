@@ -44,7 +44,6 @@ class CommonController extends Controller
             echo json_encode(array());
             exit;
         }
-
     }
 
     /**
@@ -69,8 +68,6 @@ class CommonController extends Controller
             $this->SenderUserMsg(false,'删除失败');
         }
     }
-
-
     public function UploadImg(Request $request)
     {
         $level =   intval($request->get('level'));
