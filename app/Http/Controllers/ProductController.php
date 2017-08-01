@@ -162,6 +162,10 @@ class ProductController extends Controller
         $page=1;//默认第一页
         //建立查询数据
         $data=DB::table('ds_notice_form')->orderBy('id')->offset($page,$page_size)->limit($page_size)->get();
+        
+
+
+
 var_dump($data);exit;
 
     }
