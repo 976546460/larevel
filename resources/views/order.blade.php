@@ -45,7 +45,7 @@
 <script src="js/plugins/jqgrid/i18n/grid.locale-cnffe4.js?0820"></script>
 <script src="js/plugins/jqgrid/jquery.jqGrid.minffe4.js?0820"></script>
 <script src="js/content.min.js?v=1.0.0"></script>
-<script>
+<script >
     $(document).ready(function(){
         $.jgrid.defaults.styleUI="Bootstrap";
         orderList();

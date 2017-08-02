@@ -18,7 +18,7 @@ class ProductController extends Controller
     public function show($id)
     {
         $productRes = Product::find($id);
-        $news = DB::table('ds_notice_form')->select('title', 'id', 'time', 'content')->where('pid', '=', $id)->orderBy('id',"DESC")->paginate(2);
+        $news = DB::table('ds_notice_form')->select('title', 'id', 'time', 'content')->where('pid', '=', $id)->orderBy('id', "DESC")->paginate(2);
         if ($productRes != null) {
             $productData = $productRes->toArray();
         } else {
@@ -116,12 +116,6 @@ class ProductController extends Controller
 
     public function save(Request $request)
     {
-        // $file = Input::file('file_data');
-        //检验一下上传的文件是否有效.
-        //  $clientName = $file->getClientOriginalName();
-        // $extension = $file->getClientOriginalExtension();
-        // var_dump($file);
-
         // exit;
         $title = $request->get('title');
         $content = $request->get('content');
@@ -156,20 +150,44 @@ class ProductController extends Controller
     }
 
     //分页 + 搜索
-    public function page(Request $request)
+    public function newslist(Request $request)
     {
-
-        $page_size = 5;//当前每页显示条数
-        $count = DB::table('ds_notice_form')->count();//得到总条数
+        /**
+         * @param  page  integer 当前页数
+         * @param  count  int      总条数
+         * @param  total_page  int   总页数
+         */
+        $page_size = 10;//em($request->get('number'))? $request->get('number'):10;//当前每页显示条数
+        $title_data = $request->get('title_data');
+        if (isset($title_data)) {//得到总条数
+            $count = DB::table('ds_notice_form')->where('title', 'like', '%' . $title_data . '%')->count();
+        } else {
+            $count = DB::table('ds_notice_form')->count();
+        }
         $total_page = ceil($count / $page_size);//得到总页数
-        $page = (1 <= ($request->get('page')) && ($request->get('page')) <= $total_page) ? $request->get('page') : $total_page;// 判断当前页数是否默认第一页
+        $page = (1 <= ($request->get('page')) && ($request->get('page')) <= $total_page) ? $request->get('page') : $total_page; // 判断当前页数是否默认第一页
         //建立查询数据
-        $data = DB::table('ds_notice_form')->orderBy('id','DESC')->offset(($page-1)*$page_size)->limit($page_size)->get();
-        $r= json_encode($data);
-
-        var_dump($r);
-        exit;
-
+        if(isset($title_data)){
+            $_data = DB::table('ds_notice_form')->where('title', 'like', '%' . $title_data . '%')->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
+        }else {
+            $_data = DB::table('ds_notice_form')->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
+        }
+        $data['page']= $page;
+        $data['total']  = $total_page;
+        $data['number'] = $page_size;
+        $data['records'] = $count;
+        $data['rows']    = $_data;
+        return   json_encode($data);
     }
 
+    //删除文章
+    public function delete(Request $request){
+        $id=$request->get('id');
+       $r= DB::table('ds_notice_form')->where('id',$id)->delete();
+        if($r){
+            return json_encode(['status'=>true]);
+        }else{
+            return json_encode(['status'=>false]);
+        }
+    }
 }

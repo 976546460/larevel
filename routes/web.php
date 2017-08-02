@@ -17,23 +17,21 @@ Route::group(['middleware' => 'verify'], function ()
     Route::post('productimglist'    , 'ProductController@ImgList');
     Route::post('deleteimg','ProductController@DeleteImg');
     Route::post('uploadimg','ProductController@UploadImg');
-  //  Route::get('edit','ProductController@edit');
     //主页管理 路由
     Route::resource('main'  , 'PublicController');
     Route::post('mainimglist'    , 'PublicController@ImgList');
     Route::post('mainuploadimg','PublicController@UploadImg');
     Route::post('maindeleteimg','PublicController@DeleteImg');
-
-    //新闻公告管理路由
-    Route::resource('news',   'NewsController');
-
-
+    //新闻编辑
     Route::resource('product'       ,'ProductController');
     Route::get('edit/{id}', 'ProductController@edit');
+    Route::get('daletenews', 'ProductController@delete');
+
     Route::post('editsave', 'ProductController@save');
     Route::post('editorupload', 'ProductController@editorupload');
+    //新闻公告分页
+    Route::post('newslist','ProductController@newslist');
 });
-Route::get('page','ProductController@page');
 
 
 

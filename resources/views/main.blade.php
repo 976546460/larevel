@@ -4,12 +4,9 @@
 
     <link href="../css/bootstrap.min.css" rel="stylesheet">
     <link href="../css/fileinput.css" media="all" rel="stylesheet" type="text/css"/>
-    <link href="../themes/explorer/theme.css" media="all" rel="stylesheet" type="text/css"/>
     <script src="../js/jquery2.1.1.min.js"></script>
     <script src="../js/plugins/sortable.js" type="text/javascript"></script>
     <script src="../js/fileinput.js" type="text/javascript"></script>
-    <script src="../js/locales/fr.js" type="text/javascript"></script>
-    <script src="../js/locales/es.js" type="text/javascript"></script>
     <script src="../themes/explorer/theme.js" type="text/javascript"></script>
     <script src="../js/bootstrap.min.js" type="text/javascript"></script>
 </head>
