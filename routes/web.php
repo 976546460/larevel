@@ -25,7 +25,9 @@ Route::group(['middleware' => 'verify'], function ()
     //新闻编辑
     Route::resource('product'       ,'ProductController');
     Route::get('edit/{id}', 'ProductController@edit');
-    Route::get('daletenews', 'ProductController@delete');
+    Route::get('deletenews', 'ProductController@delete');
+    Route::get('look/{id}', 'ProductController@looknews');
+
 
     Route::post('editsave', 'ProductController@save');
     Route::post('editorupload', 'ProductController@editorupload');

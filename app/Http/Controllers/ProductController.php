@@ -110,8 +110,13 @@ class ProductController extends Controller
 
     public function edit($id)
     {
+        $id=addslashes($id);
         $content = DB::table('ds_notice_form')->select('title', 'pid', 'id', 'content')->where('id', '=', $id)->get()->toArray();
-        return view('editContent', ['content' => $content]);
+       if(empty($content)){
+           return false;
+       }else {
+           return view('editContent', ['content' => $content]);
+       }
     }
 
     public function save(Request $request)
@@ -156,21 +161,24 @@ class ProductController extends Controller
          * @param  page  integer 当前页数
          * @param  count  int      总条数
          * @param  total_page  int   总页数
+         * @param  $pid    int     产品ID
+         * @param  $title_data  string   搜索字符
          */
         $page_size = 10;//em($request->get('number'))? $request->get('number'):10;//当前每页显示条数
         $title_data = $request->get('title_data');
+        $pid=$request->get('pid');//对应的产品ID
         if (isset($title_data)) {//得到总条数
-            $count = DB::table('ds_notice_form')->where('title', 'like', '%' . $title_data . '%')->count();
+            $count = DB::table('ds_notice_form')->where('title', 'like', '%' . $title_data . '%')->where('pid','=',$pid)->count();
         } else {
-            $count = DB::table('ds_notice_form')->count();
+            $count = DB::table('ds_notice_form')->where('pid','=',$pid)->count();
         }
-        $total_page = ceil($count / $page_size);//得到总页数
+        $total_page = ceil($count / $page_size);
         $page = (1 <= ($request->get('page')) && ($request->get('page')) <= $total_page) ? $request->get('page') : $total_page; // 判断当前页数是否默认第一页
         //建立查询数据
         if(isset($title_data)){
-            $_data = DB::table('ds_notice_form')->where('title', 'like', '%' . $title_data . '%')->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
+            $_data = DB::table('ds_notice_form')->where('title', 'like', '%' . $title_data . '%')->where('pid','=',$pid)->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
         }else {
-            $_data = DB::table('ds_notice_form')->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
+            $_data = DB::table('ds_notice_form')->where('pid','=',$pid)->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
         }
         $data['page']= $page;
         $data['total']  = $total_page;
@@ -190,4 +198,19 @@ class ProductController extends Controller
             return json_encode(['status'=>false]);
         }
     }
+
+    //查看新闻公告
+    public function looknews($id){
+
+        $id=addslashes($id);
+        $content = DB::table('ds_notice_form')->select('title', 'time', 'content')->where('id', '=', $id)->first();
+        if(empty($content)){
+            return view('404');
+        }else {
+            return view('showNews', ['content' => $content]);
+        }
+    }
+
+
 }
+

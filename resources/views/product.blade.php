@@ -214,7 +214,8 @@
             mtype: 'POST',
             postData: {
                 _token: $("#_token").val(),
-                title_data: $("#title_data").val()
+                title_data: $("#title_data").val(),
+                pid:$("#productId").val()
             },
             shrinkToFit: true,
             rowNum: 10,
@@ -234,11 +235,11 @@
                 {
                     name: "id", index: "id", edtiable: false, width: 50, editType: "text",
                     formatter: function imageFormatter(cellvalue) {
-                        var str = "<a href='/look/" + cellvalue + "' class='btn btn-info  btn-xs'><span class='glyphicon glyphicon-zoom-in'></span></a>" +
-                                " <a href='/edit/" + cellvalue + "' class='btn btn-warning btn-xs'><span class='glyphicon glyphicon-edit'></apan></a> " +
-                                "<a href='javascript:;' onclick=\"deleteData(" + cellvalue + ")\" class='btn btn-danger btn-xs '><span class='glyphicon glyphicon-remove'></apan></a>";
+                        var str = "<a href='/look/" + cellvalue + "' class='btn btn-outline btn-info'><span class='glyphicon glyphicon-zoom-in'></span></a> " +
+                                " <a href='/edit/" + cellvalue + "' class='btn btn-outline btn-warning'><span class='glyphicon glyphicon-edit'></apan></a>  " +
+                                "<a href='javascript:;' onclick=\"deleteData(" + cellvalue + ")\" class='btn btn-outline btn-danger'><span class='glyphicon glyphicon-remove'></apan></a>";
                         return str;
-                    }
+                    },
                 },
             ],
             pager: "#pager_list_2",
@@ -267,7 +268,7 @@
                 'X-CSRF-TOKEN': $("#_token").val()
             }
         });
-        $.get("/daletenews",{token: $("#_token").val(),id: data, },function (rs){
+        $.get("/deletenews",{token: $("#_token").val(),id: data, },function (rs){
                     if(rs.status===true){
                     //删除页面的
                         $('#'+data+'').remove();
