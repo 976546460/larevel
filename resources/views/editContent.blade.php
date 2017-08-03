@@ -71,7 +71,7 @@
                                     <?=$v->title?>                               </div>
                                 <div class="modal-footer">
                                     <div style="display: none;"  class="uniquid"><?=$v->id?></div>
-                                    <div style="display: none;"  class="game_id"><?=$v->pid?></div>
+                                    <div style="display: none;"  class="_pid"><?=$v->pid?></div>
                                     <button type="button" class="btn btn-default " data-dismiss="modal">关闭</button>
                                     <button type="button" class="btn btn-primary content_save">保存</button>
                                 </div>
@@ -126,9 +126,6 @@
     })
 //上传文章内容
     $('.content_save').click(function () {
-        console.debug($('.summernote').html());
-        // var markupStr = $('#summernote').summernote('code');
-        //console.debug(markupStr);
         $.post("/editsave",
                 {
                     content:$('.note-editable').html(),
@@ -140,7 +137,7 @@
                     // console.debug(status)
                     if(status[0]==true) {
                             alert('保存成功！');
-                        window.location.href='/product/'+Number($('.game_id').text());
+                        window.location.href='/product/'+Number($('._pid').text());
                     }else{
                         alert('保存失败！ 请重试！');
                     }});

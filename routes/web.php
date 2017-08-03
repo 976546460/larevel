@@ -14,6 +14,7 @@ Route::group(['middleware' => 'verify'], function ()
     Route::any('signout'    ,'LoginController@signout');
     Route::post('list'      ,'OrderController@search');
     Route::resource('order' , 'OrderController');
+    //产品图片
     Route::post('productimglist'    , 'ProductController@ImgList');
     Route::post('deleteimg','ProductController@DeleteImg');
     Route::post('uploadimg','ProductController@UploadImg');
@@ -27,9 +28,17 @@ Route::group(['middleware' => 'verify'], function ()
     Route::get('edit/{id}', 'ProductController@edit');
     Route::get('deletenews', 'ProductController@delete');
     Route::get('look/{id}', 'ProductController@looknews');
-    Route::post('newslist','ProductController@newslist');
-    Route::post('editsave', 'ProductController@save');
+    Route::post('editsave', 'ProductController@editSave');
     Route::post('editorupload', 'ProductController@editorupload');
+    Route::post('productTitleSave', 'ProductController@titlesave');
+    Route::get('addnews/{id}', 'ProductController@addNews');
+    Route::post('addsave', 'ProductController@addSave');
+
+
+    //产品列表
+    Route::resource('productlist','AddProductController');
+    Route::post('addproduct','AddProductController@add');
+
 //菜单管理
     Route::get('editorupload', 'ProductController@editorupload');
 
