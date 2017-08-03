@@ -210,7 +210,5 @@ class ProductController extends Controller
             return view('showNews', ['content' => $content]);
         }
     }
-
-
 }
 

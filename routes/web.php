@@ -27,12 +27,13 @@ Route::group(['middleware' => 'verify'], function ()
     Route::get('edit/{id}', 'ProductController@edit');
     Route::get('deletenews', 'ProductController@delete');
     Route::get('look/{id}', 'ProductController@looknews');
-
-
+    Route::post('newslist','ProductController@newslist');
     Route::post('editsave', 'ProductController@save');
     Route::post('editorupload', 'ProductController@editorupload');
+//菜单管理
+    Route::get('editorupload', 'ProductController@editorupload');
+
     //新闻公告分页
-    Route::post('newslist','ProductController@newslist');
 });
 
 
