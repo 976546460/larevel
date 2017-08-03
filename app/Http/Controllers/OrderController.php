@@ -40,7 +40,7 @@ class OrderController extends Controller
         $data['total']  = ($count%$number) > 0 ?  intval($count/$number) + 1: intval($count/$number);
         $data['number']     = $number;
         $data['records'] = $count;
-        $data['rows']       = $_data;
+        $data[';']       = $_data;
         echo json_encode($data);
         exit;
     }

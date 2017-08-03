@@ -3,14 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Img;
-use App\Noticeform;
 use App\Product;
-use Illuminate\Contracts\Encryption\EncryptException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
-use League\Flysystem\Exception;
-use Psy\Exception\RuntimeException;
 
 class ProductController extends Controller
 {
@@ -18,14 +14,15 @@ class ProductController extends Controller
     public function show($id)
     {
         $productRes = Product::find($id);
-        $news = DB::table('ds_notice_form')->select('title', 'id', 'time', 'content')->where('pid', '=', $id)->orderBy('id', "DESC")->paginate(2);
-        if ($productRes != null) {
+
+        $product_meun = DB::table('ds_meun')->select('title', 'id')->where('title', $productRes->name)->first();
+        if ($productRes != null && $product_meun != null) {
             $productData = $productRes->toArray();
         } else {
             // throw new RuntimeException("游戏未找到");
             $this->SenderUserMsg(false, '未找到此游戏');
         }
-        return view('product', ['productData' => $productData, 'news' => $news]);
+        return view('product', ['productData' => $productData, 'product_info' => $product_meun]);
     }
 
     /**
@@ -110,16 +107,16 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        $id=addslashes($id);
+        $id = addslashes($id);
         $content = DB::table('ds_notice_form')->select('title', 'pid', 'id', 'content')->where('id', '=', $id)->get()->toArray();
-       if(empty($content)){
-           return false;
-       }else {
-           return view('editContent', ['content' => $content]);
-       }
+        if (empty($content)) {
+            return false;
+        } else {
+            return view('editContent', ['content' => $content]);
+        }
     }
 
-    public function save(Request $request)
+    public function editSave(Request $request)
     {
         // exit;
         $title = $request->get('title');
@@ -166,49 +163,87 @@ class ProductController extends Controller
          */
         $page_size = 10;//em($request->get('number'))? $request->get('number'):10;//当前每页显示条数
         $title_data = $request->get('title_data');
-        $pid=$request->get('pid');//对应的产品ID
+        $pid = $request->get('pid');//对应的产品ID
         if (isset($title_data)) {//得到总条数
-            $count = DB::table('ds_notice_form')->where('title', 'like', '%' . $title_data . '%')->where('pid','=',$pid)->count();
+            $count = DB::table('ds_notice_form')->where('title', 'like', '%' . $title_data . '%')->where('pid', '=', $pid)->count();
         } else {
-            $count = DB::table('ds_notice_form')->where('pid','=',$pid)->count();
+            $count = DB::table('ds_notice_form')->where('pid', '=', $pid)->count();
         }
         $total_page = ceil($count / $page_size);
         $page = (1 <= ($request->get('page')) && ($request->get('page')) <= $total_page) ? $request->get('page') : $total_page; // 判断当前页数是否默认第一页
         //建立查询数据
-        if(isset($title_data)){
-            $_data = DB::table('ds_notice_form')->where('title', 'like', '%' . $title_data . '%')->where('pid','=',$pid)->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
-        }else {
-            $_data = DB::table('ds_notice_form')->where('pid','=',$pid)->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
+        if (isset($title_data)) {
+            $_data = DB::table('ds_notice_form')->where('title', 'like', '%' . $title_data . '%')->where('pid', '=', $pid)->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
+        } else {
+            $_data = DB::table('ds_notice_form')->where('pid', '=', $pid)->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
         }
-        $data['page']= $page;
-        $data['total']  = $total_page;
+        $data['page'] = $page;
+        $data['total'] = $total_page;
         $data['number'] = $page_size;
         $data['records'] = $count;
-        $data['rows']    = $_data;
-        return   json_encode($data);
+        $data['rows'] = $_data;
+        return json_encode($data);
     }
 
     //删除文章
-    public function delete(Request $request){
-        $id=$request->get('id');
-       $r= DB::table('ds_notice_form')->where('id',$id)->delete();
-        if($r){
-            return json_encode(['status'=>true]);
-        }else{
-            return json_encode(['status'=>false]);
+    public function delete(Request $request)
+    {
+        $id = $request->get('id');
+        $r = DB::table('ds_notice_form')->where('id', $id)->delete();
+        if ($r) {
+            return json_encode(['status' => true]);
+        } else {
+            return json_encode(['status' => false]);
         }
     }
 
     //查看新闻公告
-    public function looknews($id){
+    public function looknews($id)
+    {
 
-        $id=addslashes($id);
+        $id = addslashes($id);
         $content = DB::table('ds_notice_form')->select('title', 'time', 'content')->where('id', '=', $id)->first();
-        if(empty($content)){
+        if (empty($content)) {
             return view('404');
-        }else {
+        } else {
             return view('showNews', ['content' => $content]);
         }
+    }
+
+    //修改ds_meun表的产品标题和ds_product表里面的name
+    public function titlesave(Request $request)
+    {
+        DB::beginTransaction();
+        $meun_title = DB::table('ds_meun')->where('id', $request->get('id'))->update(['title' => $request->get('product_new_title')]);
+        $product_title = DB::table('ds_product')->where('name', $request->get('product_old_title'))->update(['name' => $request->get('product_new_title')]);
+        if ($meun_title && $product_title) {
+            DB::commit();
+            return json_encode(true);
+        } else {
+            DB::rollBack();
+            return json_encode(false);
+        }
+    }
+    //创建新闻
+    public  function addNews($id){
+        return view('addNews',['id'=>$id]);
+    }
+    //保存新建的新闻
+    public  function  addSave(Request $request){
+        $title=$request->get('title');
+        $content=$request->get('content');
+        $pid=$request->get('pid');
+        if(empty($title) || empty($content) || empty($pid)){
+            return json_encode(false);
+        }
+        $r= DB::table("ds_notice_form")->insert(['title'=>$title, 'content'=>$content, 'pid'=>$pid, 'time'=>date(time())]);
+        if($r){
+            return json_encode(true);
+        }else{
+            return  json_encode(false);
+        }
+
+
     }
 
 
