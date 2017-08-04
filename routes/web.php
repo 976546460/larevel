@@ -33,8 +33,6 @@ Route::group(['middleware' => 'verify'], function ()
     Route::post('productTitleSave', 'ProductController@titlesave');
     Route::get('addnews/{id}', 'ProductController@addNews');
     Route::post('addsave', 'ProductController@addSave');
-
-
     //产品列表
     Route::resource('productlist','AddProductController');
     Route::post('addproduct','AddProductController@add');
