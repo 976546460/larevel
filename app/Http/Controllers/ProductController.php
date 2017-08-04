@@ -110,10 +110,10 @@ class ProductController extends Controller
         $id = addslashes($id);
         $content = DB::table('ds_notice_form')->select('title', 'pid', 'id', 'content')->where('id', '=', $id)->get()->toArray();
         if (empty($content)) {
-            return false;
+           return false;
         } else {
-            return view('editContent', ['content' => $content]);
-        }
+           return view('editContent', ['content' => $content]);
+       }
     }
 
     public function editSave(Request $request)
@@ -178,11 +178,11 @@ class ProductController extends Controller
             $_data = DB::table('ds_notice_form')->where('pid', '=', $pid)->orderBy('id', 'DESC')->offset(($page - 1) * $page_size)->limit($page_size)->get();
         }
         $data['page'] = $page;
-        $data['total'] = $total_page;
+        $data['total']  = $total_page;
         $data['number'] = $page_size;
         $data['records'] = $count;
-        $data['rows'] = $_data;
-        return json_encode($data);
+        $data['rows']    = $_data;
+        return   json_encode($data);
     }
 
     //删除文章

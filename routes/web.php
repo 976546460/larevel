@@ -37,8 +37,10 @@ Route::group(['middleware' => 'verify'], function ()
     Route::resource('productlist','AddProductController');
     Route::post('addproduct','AddProductController@add');
 
+//菜单管理
+    Route::get('editorupload', 'ProductController@editorupload');
+
     //新闻公告分页
-    Route::post('newslist','ProductController@newslist');
 });
 
 
