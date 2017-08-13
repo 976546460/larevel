@@ -16,9 +16,11 @@ class AddProductController extends Controller
     public function index()
     {
         $rs = DB::table('ds_meun')->get()->toArray();
-        $product_id = DB::table('ds_product')->select('id', 'name')->get()->toArray();
-       $rows=[];
-        array_unique()
+        $rows = DB::table('ds_product')->select('id', 'name')->get()->toArray();
+     //  $rows=[];
+       // var_dump($product_id);exit;
+
+//        array_unique()
         /*foreach ($rs as $r) {
             foreach ($product_id as $pro) {
                 if ($r->product_id != $pro->id && $r->product_id > 0){
